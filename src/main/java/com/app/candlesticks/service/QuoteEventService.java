@@ -1,6 +1,6 @@
 package com.app.candlesticks.service;
 
-import com.app.candlesticks.db.Quote;
+import com.app.candlesticks.entity.Quote;
 import com.app.candlesticks.messaging.event.QuoteEvent;
 import com.app.candlesticks.repo.QuoteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;

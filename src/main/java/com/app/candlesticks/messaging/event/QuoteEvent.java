@@ -1,6 +1,6 @@
 package com.app.candlesticks.messaging.event;
 
-import com.app.candlesticks.db.Quote;
+import com.app.candlesticks.entity.Quote;
 import lombok.Data;
 
 import java.io.Serializable;

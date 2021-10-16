@@ -1,9 +1,13 @@
 package com.app.candlesticks;
 
+import com.app.candlesticks.config.SocketClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(classes = {CandlesticksApplication.class, SocketClientConfig.class})
+@ActiveProfiles("test")
 class CandlesticksApplicationTests {
 
     @Test

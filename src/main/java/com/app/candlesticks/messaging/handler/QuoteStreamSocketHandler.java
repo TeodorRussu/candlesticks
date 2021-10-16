@@ -1,5 +1,6 @@
 package com.app.candlesticks.messaging.handler;
 
+import com.app.candlesticks.service.EventService;
 import com.app.candlesticks.service.InstrumentEventService;
 import com.app.candlesticks.service.QuoteEventService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,22 +13,12 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 @Slf4j
 @Component
-public class QuoteStreamSocketHandler extends AbstractWebSocketHandler {
+public class QuoteStreamSocketHandler extends StreamSocketHandler {
 
     @Autowired
     QuoteEventService service;
 
-    @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws JsonProcessingException {
-        log.info("received message - " + message.getPayload());
-        service.handleEvent(message.getPayload());
-
-
+    public QuoteStreamSocketHandler(QuoteEventService service) {
+        super(service);
     }
-
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
-        log.info("established connection - " + session);
-    }
-
 }

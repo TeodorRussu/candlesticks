@@ -24,7 +24,6 @@ public class QuoteEventService implements EventService<QuoteEvent> {
         log.info("instrument event handling");
 
         Quote quote = quoteEvent.getData();
-        quote.setIsin("UH8C52373845");
         repository.save(quote);
     }
 }

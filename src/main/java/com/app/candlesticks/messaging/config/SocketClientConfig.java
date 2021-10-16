@@ -29,6 +29,7 @@ public class SocketClientConfig {
 
         WebSocketSession webSocketSession = webSocketClient.doHandshake(handler,
                 new WebSocketHttpHeaders(), URI.create("ws://localhost:8080/instruments")).get();
+
         return webSocketSession;
     }
 

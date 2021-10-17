@@ -2,7 +2,6 @@ package com.app.candlesticks.controller;
 
 import com.app.candlesticks.dto.CandleStick;
 import org.apache.commons.validator.routines.ISINValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

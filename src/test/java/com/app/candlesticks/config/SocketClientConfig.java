@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 @Configuration
 @Slf4j
+@Profile("test")
 public class SocketClientConfig {
 
     @Bean

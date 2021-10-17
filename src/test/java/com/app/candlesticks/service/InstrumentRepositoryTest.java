@@ -29,7 +29,7 @@ class InstrumentRepositoryTest {
 
     @Test
     @DisplayName("Save one Instrument to the empty MongoDB. The DB must contain one item afterwards")
-    public void saveOneInstrumentToEmptyDb_ok() {
+    void saveOneInstrumentToEmptyDb_ok() {
         Instrument instrument = new Instrument("AAA111111", "description");
         //given empty db
         List<Instrument> instruments = repository.findAll();

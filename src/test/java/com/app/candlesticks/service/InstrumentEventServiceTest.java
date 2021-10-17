@@ -1,6 +1,5 @@
 package com.app.candlesticks.service;
 
-import com.app.candlesticks.CandlesticksApplication;
 import com.app.candlesticks.entity.Instrument;
 import com.app.candlesticks.entity.Quote;
 import com.app.candlesticks.repo.InstrumentRepository;
@@ -8,14 +7,14 @@ import com.app.candlesticks.repo.QuoteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
@@ -61,7 +60,7 @@ class InstrumentEventServiceTest {
             "Save 2 Quotes with same ISIN. " +
             "Delete the instrument." +
             "The Quotes must be removed as well")
-    public void saveOneInstrumentAnd2QuotesWithSameIsin_removeTheInstrument_quotesMustBeRemovedAsWell() throws
+     void saveOneInstrumentAnd2QuotesWithSameIsin_removeTheInstrument_quotesMustBeRemovedAsWell() throws
             JsonProcessingException {
         final String isin = "AAA111111";
 
@@ -89,9 +88,9 @@ class InstrumentEventServiceTest {
         //delete the instrument. Expected: both instrument and quote MongoDb collections will be empty
         instrumentEventService.handleEvent(String.format(INSTRUMENT_DELETE_EVENT_MESSAGE_TEMPLATE, isin));
         quotes = quoteRepository.findAll();
-        Assertions.assertThat(quotes.size()).isEqualTo(0);
+        Assertions.assertThat(quotes).isEmpty();
         instruments = instrumentRepository.findAll();
-        Assertions.assertThat(instruments.size()).isEqualTo(0);
+        Assertions.assertThat(instruments).isEmpty();
     }
 
 
@@ -99,7 +98,7 @@ class InstrumentEventServiceTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @DisplayName("Save two Instruments with same ISIN, but different description to the empty MongoDB. " +
             "The DB must contain only the last item")
-    public void saveOneInstrumentWithSameIsinTwiceToEmptyDb_dbMustContainOneItemAfter() throws JsonProcessingException {
+     void saveOneInstrumentWithSameIsinTwiceToEmptyDb_dbMustContainOneItemAfter() throws JsonProcessingException {
         final String isin = "AAA111111";
 
         //given empty db

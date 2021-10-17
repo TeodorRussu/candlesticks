@@ -28,7 +28,7 @@ class QuoteRepositoryTest {
 
     @Test
     @DisplayName("Save one Quote to the empty MongoDB. The DB must contain one item afterwards")
-    public void saveOneInstrumentToEmptyDb_ok() {
+     void saveOneInstrumentToEmptyDb_ok() {
         Quote quote = new Quote("AAA111111", 1.2222);
         //given empty db
         List<Quote> quotes = repository.findAll();
@@ -45,7 +45,7 @@ class QuoteRepositoryTest {
             "Save Quotes (items 2 and 3) for another ISIN (ISIN 2)." +
             "Remove all quotes (2 and 3) by ISIN" +
             "Result: The DB must contain one item (item 1) afterwards.")
-    public void deleteAllByIsin_ok() {
+     void deleteAllByIsin_ok() {
         String isinOne = "AAA111111";
         String isinTwo = "AAA222222";
 
@@ -74,7 +74,7 @@ class QuoteRepositoryTest {
             "Save Quotes (items 2 and 3) for another ISIN (ISIN 2)." +
             "Find all quotes by ISIN 2" +
             "Result: The output list will have 2 items.")
-    public void findAllByIsin_ok() {
+     void findAllByIsin_ok() {
         String isinOne = "AAA111111";
         String isinTwo = "AAA222222";
 

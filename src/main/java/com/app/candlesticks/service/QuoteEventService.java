@@ -2,21 +2,15 @@ package com.app.candlesticks.service;
 
 import com.app.candlesticks.entity.Quote;
 import com.app.candlesticks.messaging.event.QuoteEvent;
-import com.app.candlesticks.repo.QuoteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class QuoteEventService implements EventService<QuoteEvent> {
-    @Autowired
-    ObjectMapper mapper;
-
-    @Autowired
-    QuoteRepository repository;
+@Data
+public class QuoteEventService extends EventService {
 
     @Override
     public void handleEvent(String event) throws JsonProcessingException {
@@ -24,6 +18,7 @@ public class QuoteEventService implements EventService<QuoteEvent> {
         log.info("instrument event handling");
 
         Quote quote = quoteEvent.getData();
-        repository.save(quote);
+        if (instrumentRepository.existsById(quote.getIsin()))
+            quoteRepository.save(quote);
     }
 }

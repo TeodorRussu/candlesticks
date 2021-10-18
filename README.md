@@ -53,7 +53,7 @@ http://localhost:9000/candlesticks?isin={ISIN}
 ```
 in this case a candlestick for the precedent 30 minutes will be generated.
 
-The endpoint support also a few more nullable query parameters:
+The endpoint supports also a few more nullable query parameters:
 
 Parameter | Description
 --- | ---

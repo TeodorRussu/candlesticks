@@ -8,19 +8,16 @@ services:
     ports:
       - 8080:8080
 
-  mongodb_container:
-    image: mongo:latest
+  mongodb:
+    image: mongo
+    volumes:
+      - data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
       MONGO_INITDB_DATABASE: candlesticks
     ports:
       - 27017:27017
-    volumes:
-      - ./mongodb_data_container:/data/db
 
-
-
-
-
-
+volumes:
+  data:

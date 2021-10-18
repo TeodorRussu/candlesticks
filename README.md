@@ -11,6 +11,7 @@ into two separate microservices.
 ## Starting the application
 
 In order to successfully start the application, the websockets and database must be available. The simulated websockets and database can be started with the following terminal command, which is called from the repository root directory.
+
 `docker compose up -d
 `
 

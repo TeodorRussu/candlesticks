@@ -66,7 +66,7 @@ for example:
 
 ####Valid input:
 * the `from` value must be before the value passed as `to`
-* the `length` value must be bigger than the difference between `to` and `from`.
+* the `length` value must be positive and bigger than the difference between `to` and `from`.
 * the `isin` must be non null an d non blank
 
 For example the following request will generate:
@@ -132,6 +132,6 @@ For a better user experience / and manual testing Mongo DB Compass can be used: 
 
 ```mongodb://root:rootpassword@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false```
 
-## System requirements
+##System requirements
 Java 11
 Docker

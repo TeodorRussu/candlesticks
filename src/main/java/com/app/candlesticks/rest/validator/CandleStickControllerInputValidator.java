@@ -9,7 +9,17 @@ import java.time.LocalDateTime;
 @Component
 public class CandleStickControllerInputValidator {
 
+
     public void validateTheInput(String isin, Long candlestickLengthInMinutes, String timeFrom, String timeTo) {
+        LocalDateTime from;
+        LocalDateTime to;
+        try{
+            from = LocalDateTime.parse(timeFrom);
+            to = LocalDateTime.parse(timeTo);
+        }catch (Exception exception){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Time from or time to cannot be parsed");
+        }
+
         if (isin.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ISIN");
         }
@@ -17,11 +27,11 @@ public class CandleStickControllerInputValidator {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid candleStick length");
         }
 
-        if (!LocalDateTime.parse(timeFrom).isBefore(LocalDateTime.parse(timeTo))) {
+        if (!from.isBefore(to)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Time range is invalid");
         }
 
-        if (LocalDateTime.parse(timeFrom).plusMinutes(candlestickLengthInMinutes).isAfter(LocalDateTime.parse(timeTo))) {
+        if (from.plusMinutes(candlestickLengthInMinutes).isAfter(to)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Candle length is smaller than the input time range");
         }
     }

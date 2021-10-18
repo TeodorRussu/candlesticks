@@ -103,7 +103,7 @@ For example the following request will generate:
     
     ....
     
-       {
+    {
         "openTimestamp": "2021-10-18T11:25:49",
         "closeTimestamp": "2021-10-18T11:55:49",
         "openPrice": 1099.6277,
@@ -141,5 +141,6 @@ For a better user experience / and manual testing Mongo DB Compass can be used: 
 ## System requirements
 
 * Java 11
-
 * Docker
+* docker-compose
+

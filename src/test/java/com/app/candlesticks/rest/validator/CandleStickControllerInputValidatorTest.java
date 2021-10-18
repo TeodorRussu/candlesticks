@@ -42,4 +42,11 @@ class CandleStickControllerInputValidatorTest {
                 () -> validator.validateTheInput("AA11", -10L, "2021-10-12T11:25:49", "2021-10-12T12:25:49")
         );
     }
+
+    @Test
+    void testUnparsableTimeFrom() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> validator.validateTheInput("AA11", 10L, "invalid", "2021-10-12T12:25:49")
+        );
+    }
 }

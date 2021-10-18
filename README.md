@@ -132,7 +132,7 @@ For example the following request will generate:
 
 ## Running the application
 Once the application is running it will start listening to messages, and post data to the mongo database.
-For a better user experience / and manual testing Mongo DB Compass can be used: it will require the following connection string to connect to the Docker running Mongo database:
+For a better user experience / and manual testing Mongo DB Compass can be used: it will require the following connection string to connect to the Mongo database running on  Docker:
 
 ```mongodb://root:rootpassword@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false```
 

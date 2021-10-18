@@ -34,7 +34,7 @@ The data received through websockets messages is saved into a Mongo Database.
 Type | Description
 --- | ---
 Instrument | Entity used to persist Instrument details received through the /instrument Websocket.
-Quote | Entity used to persist Instrument details received through the /quotes Websocket. If there is no Instrument with the ISIN received in the message, the Quote is not saved to the database.
+Quote | Entity used to persist Instrument details received through the /quotes Websocket. If in the database there is no Instrument with the ISIN received in the message, the Quote is not saved to the database.
 
 #### Incoming Instrument messages attributes
 

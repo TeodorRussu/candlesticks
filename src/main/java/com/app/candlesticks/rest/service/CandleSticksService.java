@@ -1,8 +1,9 @@
 package com.app.candlesticks.rest.service;
 
-import com.app.candlesticks.rest.dto.CandleStick;
 import com.app.candlesticks.entity.Quote;
-import com.app.candlesticks.rest.repository.MongoCollectionsRepository;
+import com.app.candlesticks.messaging.repository.QuoteRepository;
+import com.app.candlesticks.rest.dto.CandleStick;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,34 +13,38 @@ import java.util.*;
 
 
 @Service
+@Data
 public class CandleSticksService {
 
     @Autowired
-    MongoCollectionsRepository mongoCollectionsRepository;
+    QuoteRepository quoteRepository;
 
     public Collection<CandleStick> getMinutesCandleStickForInterval(String isin, long candleLengthInMinutes, String timeFromValue, String timeToValue) {
 
         LocalDateTime timeFrom = LocalDateTime.parse(timeFromValue);
         LocalDateTime timeTo = LocalDateTime.parse(timeToValue);
 
-        Deque<Quote> allQuotesOrderedByTimestamp = mongoCollectionsRepository.getDocumentsFromDatabase(isin, timeFrom, timeTo);
+        List<Quote> quotesOrderedByTimestamp = quoteRepository.findAllByIsinAndTimestampBetweenOrderByTimestamp(isin, timeFrom, timeTo);
+
         Deque<LocalDateTime> candleSticksTimeFrames = generateCandleSticksTimeIntervals(candleLengthInMinutes, timeFrom, timeTo);
 
-        return generateCandleSticksListFromQuotesBasedOnTimeFrames(allQuotesOrderedByTimestamp, candleSticksTimeFrames);
+        return generateCandleSticksListFromQuotesBasedOnTimeFrames(quotesOrderedByTimestamp, candleSticksTimeFrames);
     }
 
 
     @NotNull
     private Deque<LocalDateTime> generateCandleSticksTimeIntervals(long candleLengthInMinutes, LocalDateTime timeFrom, LocalDateTime timeTo) {
         Deque<LocalDateTime> candleSticksTimeFrames = new LinkedList<>();
+        candleSticksTimeFrames.push(timeFrom);
         while (timeTo.isAfter(timeFrom)) {
-            candleSticksTimeFrames.push(timeTo);
-            timeTo = timeTo.minusMinutes(candleLengthInMinutes);
+            timeFrom = timeFrom.plusMinutes(candleLengthInMinutes);
+            candleSticksTimeFrames.add(timeFrom);
         }
         return candleSticksTimeFrames;
     }
 
-    private Collection<CandleStick> generateCandleSticksListFromQuotesBasedOnTimeFrames(Deque<Quote> allQuotesTimestampOrdered, Deque<LocalDateTime> candleSticksTimeFrames) {
+    private Collection<CandleStick> generateCandleSticksListFromQuotesBasedOnTimeFrames(List<Quote> timestampOrderedQuotes, Deque<LocalDateTime> candleSticksTimeFrames) {
+        Deque<Quote> quotes = new LinkedList<>(timestampOrderedQuotes);
         Deque<CandleStick> candleSticks = new LinkedList<>();
 
         LocalDateTime timeFrom = candleSticksTimeFrames.pop();
@@ -47,7 +52,7 @@ public class CandleSticksService {
             LocalDateTime timeTo = candleSticksTimeFrames.pop();
 
             CandleStick candleStick = null;
-            List<Quote> quotesForCandlestick = getQuotesForNextCandlestick(timeTo, allQuotesTimestampOrdered);
+            List<Quote> quotesForCandlestick = getQuotesForNextCandlestick(timeTo, quotes);
 
             //explanatory variables
             final boolean thereAreNoPrecedentCandlesticks_And_ThereAreNoQuotesForNextIntervalCandlestick
@@ -141,6 +146,10 @@ public class CandleSticksService {
 
         candleStick.setOpenPrice(first.getPrice());
         candleStick.setClosingPrice(last.getPrice());
+    }
+
+    public List<Quote> getTimestampOrderedQuotesFromDatabase(String isin, LocalDateTime timeFrom, LocalDateTime timeTo) {
+        return quoteRepository.findAllByIsinAndTimestampBetweenOrderByTimestamp(isin, timeFrom, timeTo);
     }
 
 }

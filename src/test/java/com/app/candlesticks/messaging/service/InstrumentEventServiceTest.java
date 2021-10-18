@@ -54,7 +54,6 @@ class InstrumentEventServiceTest {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @DisplayName("" +
             "Save an Instrument with a given ISIN into an empty MongoDb. " +
             "Save 2 Quotes with same ISIN. " +
@@ -95,7 +94,6 @@ class InstrumentEventServiceTest {
 
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @DisplayName("Save two Instruments with same ISIN, but different description to the empty MongoDB. " +
             "The DB must contain only the last item")
      void saveOneInstrumentWithSameIsinTwiceToEmptyDb_dbMustContainOneItemAfter() throws JsonProcessingException {

@@ -46,14 +46,19 @@ class QuoteEventServiceTest {
         quoteEventService.setMapper(mapper);
     }
 
+    @AfterEach
+    void tearDown() {
+        instrumentRepository.deleteAll();
+        quoteRepository.deleteAll();
+    }
+
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @DisplayName("" +
             "Save an Instrument with a given ISIN (isin 1) into an empty MongoDb. " +
             "Save 2 Quotes with same ISIN. " +
             "Try to save a quote for a ISIN (isin 2) which is not present in the isin collection" +
             "The Quotes is not added")
-    void saveOneInstrumentAnd2QuotesWithSameIsin_removeTheInstrument_quotesMustBeRemovedAsWell() throws
+    void testAddQuoteForNonExistingIsin_QuoteIsNotSaved() throws
             JsonProcessingException {
         final String isinOne = "AAA111111";
         final String isinTwo = "AAA222222";
@@ -71,7 +76,7 @@ class QuoteEventServiceTest {
         instruments = instrumentRepository.findAll();
         Assertions.assertThat(instruments.size()).isEqualTo(1);
 
-        //save the updated item(with same Isin), expected: the db will contain both items.
+        //add 2 quotes for existing ISIN, expected: the db will contain both items.
         quoteEventService.handleEvent(String.format(QUOTE_EVENT_MESSAGE_TEMPLATE, isinOne));
         quoteEventService.handleEvent(String.format(QUOTE_EVENT_MESSAGE_TEMPLATE, isinOne));
         quotes = quoteRepository.findAll();
@@ -86,10 +91,4 @@ class QuoteEventServiceTest {
         Assertions.assertThat(quotes.get(1).getIsin()).isEqualTo(isinOne);
     }
 
-
-    @AfterEach
-    void tearDown() {
-        instrumentRepository.deleteAll();
-        quoteRepository.deleteAll();
-    }
 }

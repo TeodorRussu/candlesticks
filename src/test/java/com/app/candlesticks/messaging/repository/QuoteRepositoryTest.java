@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 
@@ -101,4 +101,36 @@ class QuoteRepositoryTest {
         Assertions.assertThat(quotes.get(1).getIsin()).isEqualTo(isinTwo);
     }
 
+    @Test
+    @DisplayName("Save 5 Quotes for one ISIN to the empty MongoDB." +
+            "3 Quotes have the timestamp of current_time minus 600 - 700 minutes" +
+            "Find all quotes by ISIN, and time interval of: current_time - 625 minutes ... current_time" +
+            "Result: The output list will have only 3 items (matching the time interval).")
+    void findAllByIsin_ok_filter() {
+        String isinOne = "AAA111111";
+
+        Quote quoteOne = new Quote(isinOne, 1.111, LocalDateTime.now());
+        Quote quoteTwo = new Quote(isinOne, 1.222, LocalDateTime.now());
+        Quote quoteThree = new Quote(isinOne, 1.333, LocalDateTime.now().minusMinutes(700));
+        Quote quoteFour = new Quote(isinOne, 1.444, LocalDateTime.now().minusMinutes(650));
+        Quote quoteFive = new Quote(isinOne, 1.555, LocalDateTime.now().minusMinutes(600));
+
+        //given empty db
+        List<Quote> quotes = repository.findAll();
+        Assertions.assertThat(quotes).isEmpty();
+
+        //save all items, expected: the db will contain 5 items
+        repository.saveAll(List.of(quoteOne, quoteTwo, quoteThree, quoteFour, quoteFive));
+        quotes = repository.findAll();
+        Assertions.assertThat(quotes.size()).isEqualTo(5);
+
+        //find all by isin and time interval. current_time - 625 minutes ... current_time
+        // Expected: the output list contains 4 items.
+        // Quote four and five should not be retrieved, as they are older than the interval
+        quotes = repository.findAllByIsinAndTimestampBetweenOrderByTimestamp(
+                isinOne,
+                LocalDateTime.now().minusMinutes(625),
+                LocalDateTime.now());
+        Assertions.assertThat(quotes.size()).isEqualTo(3);
+    }
 }

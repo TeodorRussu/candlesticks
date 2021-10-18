@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 @Data
@@ -18,7 +20,10 @@ public class QuoteEventService extends EventService {
         log.info("instrument event handling");
 
         Quote quote = quoteEvent.getData();
-        if (instrumentRepository.existsById(quote.getIsin()))
+
+        if (instrumentRepository.existsById(quote.getIsin())) {
+            quote.setTimestamp(LocalDateTime.now());
             quoteRepository.save(quote);
+        }
     }
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public interface InstrumentRepository extends MongoRepository<Instrument, String> {
 
-    public void deleteByIsin(String isin);
+    void deleteByIsin(String isin);
 
-    public Instrument getByIsin(String isin);
+    Instrument getByIsin(String isin);
 
 }

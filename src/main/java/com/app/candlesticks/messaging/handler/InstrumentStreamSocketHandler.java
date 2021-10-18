@@ -1,6 +1,6 @@
 package com.app.candlesticks.messaging.handler;
 
-import com.app.candlesticks.service.InstrumentEventService;
+import com.app.candlesticks.messaging.service.InstrumentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

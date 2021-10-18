@@ -1,2 +1,15 @@
 server:
-  port : 9000
+  port: 9000
+
+websockets:
+  quotes-websocket-uri: ws://localhost:8080/quotes
+  instruments-websocket-uri: ws://localhost:8080/instruments
+
+spring:
+  profiles:
+    active: development
+
+mongodb:
+  database-name: candlesticks
+  connection-string-value: mongodb://root:rootpassword@localhost:27017/?authSource=admin
+  quotes-collection: quote

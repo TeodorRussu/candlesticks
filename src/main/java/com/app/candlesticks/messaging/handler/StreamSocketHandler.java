@@ -1,6 +1,6 @@
 package com.app.candlesticks.messaging.handler;
 
-import com.app.candlesticks.service.EventService;
+import com.app.candlesticks.messaging.service.EventService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;

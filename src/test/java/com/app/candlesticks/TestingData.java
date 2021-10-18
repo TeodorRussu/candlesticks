@@ -1,6 +1,10 @@
 package com.app.candlesticks;
 
+import com.app.candlesticks.entity.Quote;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDateTime;
 
 @UtilityClass
 public class TestingData {

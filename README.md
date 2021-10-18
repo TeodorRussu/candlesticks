@@ -61,7 +61,7 @@ length| the time length of the candlesticks expected in the output
 from| starting time point for generating the candlesticks
 to| ending time limit for generating the candlesticks
 
-The parameters from and to accept values in the following format, before being URL encoded:
+The parameters `from` and `to` accept values in the following format, before being URL encoded:
 
 ```yyyy-MM-dd-THH:mm:ss.zzz```
 
@@ -76,7 +76,7 @@ for example:
 
 For example the following request will generate:
 * a list of candles(with the 'size' equals to value under length parameter)
-* the candles will be generated only for the time interval between the values from ... to
+* the candles will be generated only for the time interval between the values `from` ... `to`
 
 #### Request example
 

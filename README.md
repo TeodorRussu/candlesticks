@@ -19,6 +19,10 @@ They can be shut down using the command:
 `docker compose down
 `
 
+Once the dependencies are up and running, the application can be started with:
+
+```mvn spring-boot:run```
+
 ## Flow 1. Incoming data handling
 
 The data received through websockets messages is saved into a Mongo Database.
@@ -64,7 +68,7 @@ for example:
 
 ```2017-01-13T17:09:42.411```
 
-####Valid input:
+#### Valid input:
 * the `from` value must be before the value passed as `to`
 * the `length` value must be positive and bigger than the difference between `to` and `from`.
 * the `isin` must be non null an d non blank
@@ -73,11 +77,11 @@ For example the following request will generate:
 * a list of candles(with the 'size' equals to value under length parameter)
 * the candles will be generated only for the time interval between the values from ... to
 
-####Request example
+#### Request example
 
 ```localhost:9000/candlesticks?isin=PM2853Q71886&length=30&from=2021-10-12T12%3A55%3A49&to=2021-10-18T12%3A55%3A49```
 
-####Output example
+#### Output example
 ```[
     {
         "openTimestamp": "2021-10-17T12:25:49",
@@ -126,12 +130,15 @@ For example the following request will generate:
 
    ```
 
-##Running the application
+## Running the application
 Once the application is running it will start listening to messages, and post data to the mongo database.
 For a better user experience / and manual testing Mongo DB Compass can be used: it will require the following connection string to connect to the Docker running Mongo database:
 
 ```mongodb://root:rootpassword@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false```
 
-##System requirements
-Java 11
-Docker
+
+## System requirements
+
+* Java 11
+
+* Docker

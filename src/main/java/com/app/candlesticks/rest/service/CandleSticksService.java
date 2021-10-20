@@ -4,12 +4,13 @@ import com.app.candlesticks.entity.Quote;
 import com.app.candlesticks.messaging.repository.QuoteRepository;
 import com.app.candlesticks.rest.dto.CandleStick;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.List;
 
 
 @Service
@@ -19,6 +20,9 @@ public class CandleSticksService {
     @Autowired
     QuoteRepository quoteRepository;
 
+    @Autowired
+    CandleStickServiceEngine engine;
+
     public Collection<CandleStick> getMinutesCandleStickForInterval(String isin, long candleLengthInMinutes, String timeFromValue, String timeToValue) {
 
         LocalDateTime timeFrom = LocalDateTime.parse(timeFromValue);
@@ -26,130 +30,9 @@ public class CandleSticksService {
 
         List<Quote> quotesOrderedByTimestamp = quoteRepository.findAllByIsinAndTimestampBetweenOrderByTimestamp(isin, timeFrom, timeTo);
 
-        Deque<LocalDateTime> candleSticksTimeFrames = generateCandleSticksTimeIntervals(candleLengthInMinutes, timeFrom, timeTo);
+        Deque<LocalDateTime> candleSticksTimeFrames = engine.generateCandleSticksTimeIntervals(candleLengthInMinutes, timeFrom, timeTo);
 
-        return generateCandleSticksListFromQuotesBasedOnTimeFrames(quotesOrderedByTimestamp, candleSticksTimeFrames);
-    }
-
-
-    @NotNull
-    private Deque<LocalDateTime> generateCandleSticksTimeIntervals(long candleLengthInMinutes, LocalDateTime timeFrom, LocalDateTime timeTo) {
-        Deque<LocalDateTime> candleSticksTimeFrames = new LinkedList<>();
-        candleSticksTimeFrames.push(timeFrom);
-        while (timeTo.isAfter(timeFrom)) {
-            timeFrom = timeFrom.plusMinutes(candleLengthInMinutes);
-            candleSticksTimeFrames.add(timeFrom);
-        }
-        return candleSticksTimeFrames;
-    }
-
-    private Collection<CandleStick> generateCandleSticksListFromQuotesBasedOnTimeFrames(List<Quote> timestampOrderedQuotes, Deque<LocalDateTime> candleSticksTimeFrames) {
-        Deque<Quote> quotes = new LinkedList<>(timestampOrderedQuotes);
-        Deque<CandleStick> candleSticks = new LinkedList<>();
-
-        LocalDateTime timeFrom = candleSticksTimeFrames.pop();
-        while (!candleSticksTimeFrames.isEmpty()) {
-            LocalDateTime timeTo = candleSticksTimeFrames.pop();
-
-            CandleStick candleStick = null;
-            List<Quote> quotesForCandlestick = getQuotesForNextCandlestick(timeTo, quotes);
-
-            //explanatory variables
-            final boolean thereAreNoPrecedentCandlesticks_And_ThereAreNoQuotesForNextIntervalCandlestick
-                    = quotesForCandlestick.isEmpty() && candleSticks.isEmpty();
-            final boolean thereArePrecedentCandlesticks_And_ThereAreNoQuotesForTheTimeInterval
-                    = quotesForCandlestick.isEmpty() && !candleSticks.isEmpty();
-            boolean thereAreQuotesAvailableToBuildACandlestick = !quotesForCandlestick.isEmpty();
-
-            //if there are no quotes between the interval(timeFrom ... timeTo), and no precedent candlesticks, continue to next interval.
-            if (thereAreNoPrecedentCandlesticks_And_ThereAreNoQuotesForNextIntervalCandlestick) {
-                timeFrom = timeTo;
-                continue;
-            }
-            // if there are no quotes between the interval, next Candlestick is built based on precedent time interval Candlestick
-            if (thereArePrecedentCandlesticks_And_ThereAreNoQuotesForTheTimeInterval) {
-                candleStick = createCandleStickBasedOnPrecedentCandlestickClosingPrice(candleSticks);
-                setCandlestickTimestamp(timeFrom, timeTo, candleStick);
-            }
-            //if there are quotes between the interval(timeFrom ... timeTo), a candlestick is built.
-            if (thereAreQuotesAvailableToBuildACandlestick) {
-                candleStick = convertDocumentsToCandleStick(quotesForCandlestick);
-                setCandlestickTimestamp(timeFrom, timeTo, candleStick);
-            }
-            candleSticks.add(candleStick);
-            timeFrom = timeTo;
-        }
-        return candleSticks;
-    }
-
-    private void setCandlestickTimestamp(LocalDateTime timeFrom, LocalDateTime timeTo, CandleStick candleStick) {
-        candleStick.setOpenTimestamp(timeFrom);
-        candleStick.setCloseTimestamp(timeTo);
-    }
-
-    @NotNull
-    private CandleStick createCandleStickBasedOnPrecedentCandlestickClosingPrice(Deque<CandleStick> candleSticks) {
-        CandleStick candleStick = new CandleStick();
-        Double price = candleSticks.getLast().getClosingPrice();
-
-        candleStick.setLowPrice(price);
-        candleStick.setHighPrice(price);
-        candleStick.setOpenPrice(price);
-        candleStick.setClosingPrice(price);
-
-        return candleStick;
-    }
-
-    private List<Quote> getQuotesForNextCandlestick(LocalDateTime timeTo, Deque<Quote> result) {
-
-        List<Quote> quotesSublist = new LinkedList<>();
-        while (result.peekFirst() != null) {
-            Quote quote = result.pollFirst();
-            if (quote.getTimestamp().isAfter(timeTo)) {
-                result.push(quote);
-                break;
-            } else {
-                quotesSublist.add(quote);
-            }
-        }
-        if (!quotesSublist.isEmpty() && !result.isEmpty()) {
-            result.push(quotesSublist.get(quotesSublist.size() - 1));
-        }
-
-        return quotesSublist;
-    }
-
-
-    //methods used to convert a list of Quotes into a Candlestick
-    private CandleStick convertDocumentsToCandleStick(List<Quote> quotes) {
-        CandleStick candleStick = new CandleStick();
-        setCandleStickOpeningAndClosingPrice(quotes, candleStick);
-        setCandleStickHighestAndLowestPrices(quotes, candleStick);
-
-        return candleStick;
-    }
-
-    private void setCandleStickHighestAndLowestPrices(List<Quote> quotes, CandleStick candleStick) {
-        Comparator<Quote> priceComparator = Comparator.comparing(Quote::getPrice);
-        quotes.sort(priceComparator);
-
-        Quote first = quotes.get(0);
-        Quote last = quotes.get(quotes.size() - 1);
-
-        candleStick.setHighPrice(last.getPrice());
-        candleStick.setLowPrice(first.getPrice());
-    }
-
-    private void setCandleStickOpeningAndClosingPrice(List<Quote> quotes, CandleStick candleStick) {
-        Quote first = quotes.get(0);
-        Quote last = quotes.get(quotes.size() - 1);
-
-        candleStick.setOpenPrice(first.getPrice());
-        candleStick.setClosingPrice(last.getPrice());
-    }
-
-    public List<Quote> getTimestampOrderedQuotesFromDatabase(String isin, LocalDateTime timeFrom, LocalDateTime timeTo) {
-        return quoteRepository.findAllByIsinAndTimestampBetweenOrderByTimestamp(isin, timeFrom, timeTo);
+        return engine.generateCandleSticksListFromQuotesBasedOnTimeFrames(quotesOrderedByTimestamp, candleSticksTimeFrames);
     }
 
 }

@@ -93,8 +93,8 @@ class CandleSticksControllerTest {
         //setup the mock db response
         List<Quote> allQuotes = generateQuotesBetween(isin, timeFrom, timeTo);
         List<Quote> quotes = new ArrayList<>();
-        quotes.addAll(allQuotes.subList(0, 2000));
-        quotes.addAll(allQuotes.subList(6000, 10000));
+        quotes.addAll(allQuotes.subList(0, 100));
+        quotes.addAll(allQuotes.subList(9500, 10000));
 
         doReturn(quotes).when(quoteRepository).findAllByIsinAndTimestampBetweenOrderByTimestamp(any(), any(), any());
         service.setQuoteRepository(quoteRepository);

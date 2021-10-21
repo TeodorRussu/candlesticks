@@ -15,7 +15,6 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
-        <jackson-module-kotlin.version>2.13.0</jackson-module-kotlin.version>
         <spring-framework-version>5.2.2.RELEASE</spring-framework-version>
         <lombok.version>1.18.20</lombok.version>
         <de.flapdoodle.embed.mongo.version>3.0.0</de.flapdoodle.embed.mongo.version>

@@ -23,10 +23,7 @@ public class CandleSticksService {
     @Autowired
     CandleStickServiceEngine engine;
 
-    public Collection<CandleStick> getMinutesCandleStickForInterval(String isin, long candleLengthInMinutes, String timeFromValue, String timeToValue) {
-
-        LocalDateTime timeFrom = LocalDateTime.parse(timeFromValue);
-        LocalDateTime timeTo = LocalDateTime.parse(timeToValue);
+    public Collection<CandleStick> getMinutesCandleStickForInterval(String isin, long candleLengthInMinutes, LocalDateTime timeFrom, LocalDateTime timeTo) {
 
         List<Quote> quotesOrderedByTimestamp = quoteRepository.findAllByIsinAndTimestampBetweenOrderByTimestamp(isin, timeFrom, timeTo);
 

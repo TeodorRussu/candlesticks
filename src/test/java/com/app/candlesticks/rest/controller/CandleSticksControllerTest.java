@@ -1,5 +1,7 @@
 package com.app.candlesticks.rest.controller;
 
+import com.app.candlesticks.CandlesticksApplication;
+import com.app.candlesticks.configuration.MongoConfigMock;
 import com.app.candlesticks.entity.Quote;
 import com.app.candlesticks.messaging.repository.QuoteRepository;
 import com.app.candlesticks.rest.dto.CandleStick;
@@ -15,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -26,12 +29,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = {MongoConfigMock.class, CandlesticksApplication.class})
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class CandleSticksControllerTest {
 
     public static final String ENDPOINT_URL_TEMPLATE = "/candlesticks?isin=%s&length=%d&from=%s&to=%s";
     public static final String ENDPOINT_URL_TEMPLATE_ISIN_ONLY = "/candlesticks?isin=%s";
+
     @Autowired
     protected MockMvc mockMvc;
 
@@ -46,10 +51,9 @@ class CandleSticksControllerTest {
 
     String isin;
 
-    List<Quote> quotes;
-
     @BeforeEach
     void setUp() {
+        isin = "A100";
         MockitoAnnotations.openMocks(this);
         service.setQuoteRepository(quoteRepository);
     }

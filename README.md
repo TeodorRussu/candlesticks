@@ -142,5 +142,4 @@ For a better user experience / and manual testing Mongo DB Compass can be used: 
 
 * Java 11+
 * Docker
-* Docker-Compose
 

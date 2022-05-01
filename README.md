@@ -2,8 +2,8 @@
 
 The system is performing 2 flows:
 
-1. It receives messages from the Websocket, convert them to entities and post them to the database.
-2. A GET REST endpoint is exposed to generate the price history as Candlesticks.
+1. It receives messages from a Websocket containing stock prices, convert them to entities and post them to the database.
+2. A GET REST endpoint is exposed to generate the price history as in units of data used to generate trading charts.
 
 2 functionalities are performed in a single application for simplicity. In a real life system, I would split the system
 into two separate microservices.
@@ -41,9 +41,8 @@ Quote | Entity used to persist Instrument details received through the /quotes W
 
 Messages related to Instruments may contain one of 2 flag attributes:
 
-* ADD - the instrument with the given ISIN will be saved to the database.
-* DELETE - the instrument with the given ISIN will be removed from the database, as well as all Quotes with the same
-  ISIN.
+* ADD - the instrument will be saved to the database.
+* DELETE - the instrument will be removed from the database, as well as all price records related to it.
 
 ## Flow 2. REST endpoint
 
